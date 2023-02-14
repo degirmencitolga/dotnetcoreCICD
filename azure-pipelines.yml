@@ -1,5 +1,7 @@
-trigger:  # will disable CI builds entirely
- - master
+trigger: 
+- master
+
+
 jobs:
 - job: WebApp
   displayName: 'Build Web App'
@@ -9,6 +11,21 @@ jobs:
     BuildConfiguration: release
   
   steps:
+  
+  - task: UseDotNet@2
+    displayName: Install .NET 7 sdk
+    inputs:
+      packageType: sdk
+      version: 7.0.x
+      installationPath: $(Agent.ToolsDirectory)/dotnet
+
+  - task: DotNetCoreCLI@2
+    displayName: Restore
+    inputs:
+      command: restore
+      projects: '**/*.csproj'
+  
+
   
   - task: DotNetCoreCLI@2
     displayName: Build
@@ -27,7 +44,6 @@ jobs:
   
   
   - task: PublishBuildArtifacts@1
-    displayName: 'Publish Artifact (WebApp.zip)'
+    displayName: 'Publish Artifact (APP.zip)'
     inputs:
       PathtoPublish: '$(build.artifactstagingdirectory)'
-
